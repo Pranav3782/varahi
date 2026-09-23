@@ -68,6 +68,9 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   const quantity = product.quantity || product.vol || "500 ml";
   const deliveryTime = product.deliveryTime || "SAME DAY";
   
+  const startPos = React.useRef<{ x: number; y: number } | null>(null);
+  const isSwiping = React.useRef<boolean>(false);
+
   const discountText = product.discount || product.off || (
     originalPrice > price 
       ? `${Math.round(((originalPrice - price) / originalPrice) * 100)}% OFF` 
@@ -95,7 +98,26 @@ export const ProductCard: React.FC<ProductCardProps> = ({
     }
   };
 
-  const handleClick = () => {
+  const handlePointerDown = (e: React.PointerEvent) => {
+    startPos.current = { x: e.clientX, y: e.clientY };
+    isSwiping.current = false;
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (!startPos.current) return;
+    const deltaX = Math.abs(e.clientX - startPos.current.x);
+    const deltaY = Math.abs(e.clientY - startPos.current.y);
+    if (deltaX > 8 || deltaY > 8) {
+      isSwiping.current = true;
+    }
+  };
+
+  const handleClick = (e: React.MouseEvent) => {
+    if (isSwiping.current) {
+      e.preventDefault();
+      e.stopPropagation();
+      return;
+    }
     if (onClick) {
       onClick(product);
     }
@@ -113,7 +135,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             alt={product.name}
             fill
             className={cn(
-              "object-cover transition-all duration-500 group-hover:scale-105",
+              "object-cover transition-all duration-500 group-hover:scale-105 pointer-events-none",
               altImage ? "group-hover:opacity-0" : "opacity-100"
             )}
             sizes="(max-width: 640px) 180px, 240px"
@@ -123,7 +145,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               src={altImage}
               alt={`${product.name} alternate`}
               fill
-              className="object-cover absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+              className="object-cover absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
               sizes="(max-width: 640px) 180px, 240px"
             />
           )}
@@ -152,8 +174,10 @@ export const ProductCard: React.FC<ProductCardProps> = ({
         hidden: { opacity: 0, y: 15 },
         visible: { opacity: 1, y: 0 },
       }}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
       onClick={handleClick}
-      className="group relative w-[170px] sm:w-[210px] md:w-[240px] h-[370px] sm:h-[400px] md:h-[430px] flex-shrink-0 cursor-pointer select-none"
+      className="group relative w-[170px] sm:w-[210px] md:w-[240px] h-[370px] sm:h-[400px] md:h-[430px] flex-shrink-0 cursor-pointer select-none snap-start touch-pan-x"
     >
       <div className="flex flex-col h-full overflow-hidden rounded-2xl md:rounded-3xl border border-[#E8ECE9] bg-white transition-all duration-300 hover:shadow-xl hover:border-primary/20">
         {/* Top Section: Fixed Height Image Area */}
@@ -170,7 +194,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
             </div>
           )}
 
-          <div className="relative z-0 h-full w-full flex items-center justify-center">
+          <div className="relative z-0 h-full w-full flex items-center justify-center pointer-events-none">
             {renderImage()}
           </div>
         </div>
@@ -233,7 +257,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               whileTap={{ scale: 0.92 }}
               onClick={handleAdd}
               className={cn(
-                "h-8 md:h-9 px-2.5 md:px-3.5 rounded-xl flex items-center gap-1 text-[10px] md:text-xs font-black uppercase tracking-wider transition-all shadow-xs border-none shrink-0",
+                "h-8 md:h-9 px-2.5 md:px-3.5 rounded-xl flex items-center gap-1 text-[10px] md:text-xs font-black uppercase tracking-wider transition-all shadow-xs border-none shrink-0 cursor-pointer",
                 isInCart 
                   ? "bg-emerald-800 text-white" 
                   : "bg-primary text-white hover:bg-secondary"
@@ -265,6 +289,9 @@ export const ProductCarousel = React.forwardRef<HTMLDivElement, ProductCarouselP
     const [isScrollable, setIsScrollable] = React.useState(false);
     const [isAtStart, setIsAtStart] = React.useState(true);
     const [isAtEnd, setIsAtEnd] = React.useState(false);
+    const isMouseDownRef = React.useRef(false);
+    const startXRef = React.useRef(0);
+    const scrollLeftRef = React.useRef(0);
 
     const handleScroll = (direction: "left" | "right") => {
       if (scrollContainerRef.current) {
@@ -298,6 +325,32 @@ export const ProductCarousel = React.forwardRef<HTMLDivElement, ProductCarouselP
       };
     }, [checkScrollState, products]);
 
+    const handleMouseDown = (e: React.MouseEvent) => {
+      const el = scrollContainerRef.current;
+      if (!el) return;
+      isMouseDownRef.current = true;
+      startXRef.current = e.pageX - el.offsetLeft;
+      scrollLeftRef.current = el.scrollLeft;
+    };
+
+    const handleMouseLeave = () => {
+      isMouseDownRef.current = false;
+    };
+
+    const handleMouseUp = () => {
+      isMouseDownRef.current = false;
+    };
+
+    const handleMouseMove = (e: React.MouseEvent) => {
+      if (!isMouseDownRef.current) return;
+      const el = scrollContainerRef.current;
+      if (!el) return;
+      e.preventDefault();
+      const x = e.pageX - el.offsetLeft;
+      const walk = (x - startXRef.current) * 1.5;
+      el.scrollLeft = scrollLeftRef.current - walk;
+    };
+
     const containerVariants = {
       hidden: { opacity: 0 },
       visible: {
@@ -316,7 +369,7 @@ export const ProductCarousel = React.forwardRef<HTMLDivElement, ProductCarouselP
     };
 
     return (
-      <section className={cn("relative w-full space-y-3 md:space-y-4 py-4 md:py-8", className)} ref={ref}>
+      <section className={cn("relative w-full space-y-2 md:space-y-4 py-4 md:py-8 select-none", className)} ref={ref}>
         {/* Header */}
         <div className="flex items-end justify-between px-4 sm:px-6 md:px-10">
           <div>
@@ -342,12 +395,23 @@ export const ProductCarousel = React.forwardRef<HTMLDivElement, ProductCarouselP
           )}
         </div>
 
+        {/* Mobile Swipe Hint */}
+        {isScrollable && (
+          <div className="md:hidden flex items-center gap-1 text-[10px] font-bold text-[#7A6848]/70 px-4 pt-0.5">
+            <span className="animate-pulse">👈 Swipe cards to explore 👉</span>
+          </div>
+        )}
+
         {/* Carousel Outer Wrapper */}
         <div className="relative group/carousel">
           {/* Scrollable Container */}
           <motion.div
             ref={scrollContainerRef}
-            className="no-scrollbar flex space-x-3 sm:space-x-4 md:space-x-6 overflow-x-auto px-4 sm:px-6 md:px-10 py-2 snap-x snap-mandatory scroll-smooth"
+            onMouseDown={handleMouseDown}
+            onMouseLeave={handleMouseLeave}
+            onMouseUp={handleMouseUp}
+            onMouseMove={handleMouseMove}
+            className="no-scrollbar flex space-x-3 sm:space-x-4 md:space-x-6 overflow-x-auto px-4 sm:px-6 md:px-10 py-2 snap-x snap-mandatory scroll-smooth touch-pan-x cursor-grab active:cursor-grabbing"
             variants={containerVariants}
             initial="hidden"
             animate="visible"
@@ -371,7 +435,7 @@ export const ProductCarousel = React.forwardRef<HTMLDivElement, ProductCarouselP
                   onClick={() => handleScroll("left")}
                   aria-label="Scroll left"
                   className={cn(
-                    "absolute left-2 sm:left-4 top-1/2 z-20 -translate-y-1/2 h-10 w-10 md:h-12 md:w-12 rounded-full border border-[#E8ECE9] bg-white text-primary p-0 shadow-lg transition-all duration-300 hover:bg-primary hover:text-white hover:scale-105 active:scale-95 flex items-center justify-center"
+                    "hidden md:flex absolute left-2 sm:left-4 top-1/2 z-20 -translate-y-1/2 h-10 w-10 md:h-12 md:w-12 rounded-full border border-[#E8ECE9] bg-white text-primary p-0 shadow-lg transition-all duration-300 hover:bg-primary hover:text-white hover:scale-105 active:scale-95 items-center justify-center cursor-pointer"
                   )}
                 >
                   <ChevronLeft className="h-6 w-6" />
@@ -383,7 +447,7 @@ export const ProductCarousel = React.forwardRef<HTMLDivElement, ProductCarouselP
                   onClick={() => handleScroll("right")}
                   aria-label="Scroll right"
                   className={cn(
-                    "absolute right-2 sm:right-4 top-1/2 z-20 -translate-y-1/2 h-10 w-10 md:h-12 md:w-12 rounded-full border border-[#E8ECE9] bg-white text-primary p-0 shadow-lg transition-all duration-300 hover:bg-primary hover:text-white hover:scale-105 active:scale-95 flex items-center justify-center"
+                    "hidden md:flex absolute right-2 sm:right-4 top-1/2 z-20 -translate-y-1/2 h-10 w-10 md:h-12 md:w-12 rounded-full border border-[#E8ECE9] bg-white text-primary p-0 shadow-lg transition-all duration-300 hover:bg-primary hover:text-white hover:scale-105 active:scale-95 items-center justify-center cursor-pointer"
                   )}
                 >
                   <ChevronRight className="h-6 w-6" />

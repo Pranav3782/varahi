@@ -38,6 +38,7 @@ import { aiProductUsageAndRecipeIdeas, RecipeIdeasOutput } from '@/ai/flows/ai-p
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { ProductCard } from '@/components/vivaan/ProductCard';
+import { ProductCarousel } from '@/components/ui/product-carousel';
 import { ProductReviewsSection } from '@/components/vivaan/ProductReviewsSection';
 import { ErrorCard } from '@/components/ui/ErrorCard';
 
@@ -62,6 +63,30 @@ export default function ProductDetailsPage() {
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [aiData, setAiData] = useState<RecipeIdeasOutput | null>(null);
   const [loadingAi, setLoadingAi] = useState(false);
+
+  const galleryTouchStartX = React.useRef<number | null>(null);
+  const galleryTouchEndX = React.useRef<number | null>(null);
+
+  const handleGalleryTouchStart = (e: React.TouchEvent) => {
+    galleryTouchEndX.current = null;
+    galleryTouchStartX.current = e.targetTouches[0].clientX;
+  };
+
+  const handleGalleryTouchMove = (e: React.TouchEvent) => {
+    galleryTouchEndX.current = e.targetTouches[0].clientX;
+  };
+
+  const handleGalleryTouchEnd = () => {
+    if (!galleryTouchStartX.current || !galleryTouchEndX.current || galleryImages.length <= 1) return;
+    const distance = galleryTouchStartX.current - galleryTouchEndX.current;
+    if (distance > 35) {
+      setSelectedImgIndex((prev) => (prev + 1) % galleryImages.length);
+    } else if (distance < -35) {
+      setSelectedImgIndex((prev) => (prev - 1 + galleryImages.length) % galleryImages.length);
+    }
+    galleryTouchStartX.current = null;
+    galleryTouchEndX.current = null;
+  };
 
   // Standardize product data
   const mapProductData = (p: any, index: number = 0): Product => {
@@ -210,7 +235,12 @@ export default function ProductDetailsPage() {
           
           {/* Gallery Area - Compact and Balanced */}
           <div className="lg:col-span-6 space-y-2 sm:space-y-3">
-            <div className="bg-[#F8F6F0] rounded-2xl md:rounded-[32px] border border-[#EEE0BC]/50 shadow-xs relative overflow-hidden group flex items-center justify-center h-[210px] xs:h-[250px] sm:h-[320px] md:h-[450px] lg:h-[500px] transition-all">
+            <div 
+              onTouchStart={handleGalleryTouchStart}
+              onTouchMove={handleGalleryTouchMove}
+              onTouchEnd={handleGalleryTouchEnd}
+              className="bg-[#F8F6F0] rounded-2xl md:rounded-[32px] border border-[#EEE0BC]/50 shadow-xs relative overflow-hidden group flex items-center justify-center h-[210px] xs:h-[250px] sm:h-[320px] md:h-[450px] lg:h-[500px] transition-all cursor-grab active:cursor-grabbing select-none touch-pan-x"
+            >
               
               {/* Badges Floating inside Gallery */}
               <div className="absolute top-2.5 left-2.5 z-10 flex flex-col gap-1">
@@ -228,14 +258,14 @@ export default function ProductDetailsPage() {
               <div className="absolute top-2.5 right-2.5 z-10 flex items-center gap-1.5">
                 <button 
                   onClick={() => toggleWishlist(product.id)}
-                  className="w-8 h-8 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-xs hover:bg-white text-gray-700 hover:text-red-500 transition-all"
+                  className="w-8 h-8 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-xs hover:bg-white text-gray-700 hover:text-red-500 transition-all cursor-pointer"
                   title="Wishlist"
                 >
                   <Heart className={cn("w-4 h-4 transition-colors", isWishlisted && "fill-red-500 text-red-500")} />
                 </button>
                 <button 
                   onClick={handleShare}
-                  className="w-8 h-8 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-xs hover:bg-white text-gray-700 transition-all"
+                  className="w-8 h-8 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center shadow-xs hover:bg-white text-gray-700 transition-all cursor-pointer"
                   title="Share"
                 >
                   <Share2 className="w-4 h-4" />
@@ -252,7 +282,7 @@ export default function ProductDetailsPage() {
                     src={activeImageSrc} 
                     alt={product.name} 
                     fill 
-                    className="object-contain p-2 drop-shadow-md"
+                    className="object-contain p-2 drop-shadow-md pointer-events-none"
                     priority
                     sizes="(max-width: 768px) 100vw, 50vw"
                   />
@@ -271,10 +301,15 @@ export default function ProductDetailsPage() {
                 </div>
               </div>
 
-              {/* Counter Badge for Mobile */}
+              {/* Counter & Swipe Badge for Mobile */}
               {galleryImages.length > 1 && (
-                <div className="absolute bottom-2 left-2 bg-black/60 text-white text-[9px] font-extrabold px-2 py-0.5 rounded-full backdrop-blur-md">
-                  {selectedImgIndex + 1} / {galleryImages.length}
+                <div className="absolute bottom-2 left-2 flex items-center gap-1.5 z-10">
+                  <div className="bg-black/60 text-white text-[9px] font-extrabold px-2 py-0.5 rounded-full backdrop-blur-md">
+                    {selectedImgIndex + 1} / {galleryImages.length}
+                  </div>
+                  <div className="md:hidden bg-primary/90 text-white text-[9px] font-extrabold px-2 py-0.5 rounded-full backdrop-blur-md animate-pulse">
+                    Swipe ⟷
+                  </div>
                 </div>
               )}
             </div>
@@ -531,26 +566,27 @@ export default function ProductDetailsPage() {
           fallbackCount={product.reviewCount} 
         />
 
-        <div className="py-8 md:py-12 border-t border-[#EEE0BC]/30">
+        <div className="py-4 md:py-8 border-t border-[#EEE0BC]/30">
           {relatedProducts.length > 0 && (
-            <div>
-               <div className="flex items-center justify-between mb-6">
-                 <h3 className="font-headline text-2xl md:text-4xl font-extrabold text-primary">You May Also Like</h3>
-                 <button className="text-[10px] font-black text-primary uppercase tracking-widest hover:underline" onClick={() => router.push('/')}>View All</button>
-               </div>
-               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 md:gap-6 items-stretch">
-                 {relatedProducts.map((p) => (
-                   <div key={p.id} className="h-full flex flex-col">
-                     <ProductCard 
-                      product={p} 
-                      isInCart={cart.some(c => c.id === p.id)} 
-                      onOpen={() => router.push(`/product/${p.id}`)} 
-                      onAdd={() => addToCart(p)} 
-                     />
-                   </div>
-                 ))}
-               </div>
-            </div>
+            <ProductCarousel
+              title="You May Also Like"
+              subtitle="Recommended For You"
+              products={relatedProducts.map(p => ({
+                ...p,
+                quantity: p.vol || '500 ml',
+                deliveryTime: 'SAME DAY',
+                originalPrice: p.mrpPrice,
+                imageUrl: p.imageUrls?.[0],
+                description: p.description
+              }))}
+              cartIds={cart.map(c => c.id)}
+              onAddToCart={(cp) => {
+                const originalP = relatedProducts.find(p => String(p.id) === String(cp.id));
+                if (originalP) addToCart(originalP);
+              }}
+              onProductClick={(cp) => router.push(`/product/${cp.id}`)}
+              onViewAll={() => router.push('/')}
+            />
           )}
         </div>
       </main>
