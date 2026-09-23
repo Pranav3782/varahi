@@ -235,3 +235,23 @@
 .menu__item.active .menu__text::after {
   width: var(--lineWidth, 100%);
 }
+
+/* Mobile Responsiveness & Touch Optimization Utilities */
+@layer utilities {
+  .touch-callout-none {
+    -webkit-touch-callout: none;
+  }
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom, 16px);
+  }
+  .mb-safe {
+    margin-bottom: env(safe-area-inset-bottom, 16px);
+  }
+  .mobile-touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}

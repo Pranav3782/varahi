@@ -75,16 +75,16 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onC
   }
 
   return (
-    <div className="fixed inset-0 z-[1100] flex items-center justify-center bg-black/60 backdrop-blur-md p-4 sm:p-8" onClick={(e) => e.target === e.currentTarget && onClose()}>
-      <div className="bg-white rounded-[32px] max-w-[980px] w-full max-h-[calc(100vh-64px)] overflow-hidden flex flex-col md:flex-row shadow-2xl animate-in zoom-in-95 duration-300 relative">
-        <button onClick={onClose} className="absolute top-5 right-5 z-[20] w-10 h-10 bg-black/5 rounded-full flex items-center justify-center hover:bg-black/10 transition-all">
+    <div className="fixed inset-0 z-[1100] flex items-center justify-center bg-black/60 backdrop-blur-md p-2 sm:p-4 md:p-8" onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="bg-white rounded-[24px] sm:rounded-[32px] max-w-[980px] w-full max-h-[calc(100vh-32px)] md:max-h-[calc(100vh-64px)] overflow-hidden flex flex-col md:flex-row shadow-2xl animate-in zoom-in-95 duration-300 relative">
+        <button onClick={onClose} className="absolute top-4 right-4 sm:top-5 sm:right-5 z-[20] w-9 h-9 sm:w-10 sm:h-10 bg-black/5 rounded-full flex items-center justify-center hover:bg-black/10 transition-all cursor-pointer">
           <X className="w-5 h-5 text-foreground" />
         </button>
 
-        <div className="md:w-1/2 bg-gradient-to-br from-[#FAF4E6] to-[#EEE0BC] p-10 flex flex-col items-center justify-center relative min-h-[360px]">
+        <div className="md:w-1/2 bg-gradient-to-br from-[#FAF4E6] to-[#EEE0BC] p-4 sm:p-8 md:p-10 flex flex-col items-center justify-center relative min-h-[180px] sm:min-h-[260px] md:min-h-[360px] shrink-0">
           <div className="absolute top-[-30px] right-[-30px] w-[180px] h-[180px] rounded-full bg-[radial-gradient(circle,rgba(27,94,59,0.1),transparent_70%)] pointer-events-none"></div>
           
-          <div className="bg-white rounded-[32px] p-6 md:p-12 shadow-2xl relative group overflow-hidden max-w-[320px] w-full aspect-square flex items-center justify-center">
+          <div className="bg-white rounded-[20px] sm:rounded-[32px] p-3 sm:p-6 md:p-12 shadow-2xl relative group overflow-hidden max-w-[180px] sm:max-w-[260px] md:max-w-[320px] w-full aspect-square flex items-center justify-center">
              <div className="absolute inset-0 bg-[radial-gradient(circle_at_65%_25%,rgba(255,255,255,0.5),transparent_60%)] pointer-events-none z-1"></div>
              
              <div className="relative w-full h-full flex items-center justify-center transition-transform duration-500 group-hover:scale-105 group-hover:rotate-[-2deg]">
@@ -111,7 +111,7 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onC
           </div>
         </div>
 
-        <div className="md:w-1/2 p-8 md:p-10 overflow-y-auto">
+        <div className="md:w-1/2 p-4 sm:p-8 md:p-10 overflow-y-auto">
           <div className="inline-flex items-center gap-2 bg-destructive/5 border border-destructive/20 rounded-full px-4 py-1.5 mb-4">
             <div className="w-2 h-2 rounded-full bg-destructive blink"></div>
             <span className="text-[11px] font-bold text-destructive">14 people viewing now</span>

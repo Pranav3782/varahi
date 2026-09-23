@@ -725,8 +725,9 @@ export const ProductCategoryManager: React.FC<ProductCategoryManagerProps> = ({
           </div>
         </div>
         
-        <Table>
-          <TableHeader className="bg-[#FDFBFA]">
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader className="bg-[#FDFBFA]">
             <TableRow className="border-b-[#F9F6EF]">
               <TableHead className="py-6 px-8 text-[10px] font-black uppercase tracking-widest text-[#7A6848]">Product</TableHead>
               <TableHead className="text-[10px] font-black uppercase tracking-widest text-[#7A6848]">Size / Variants</TableHead>
@@ -820,7 +821,8 @@ export const ProductCategoryManager: React.FC<ProductCategoryManagerProps> = ({
             )}
           </TableBody>
         </Table>
-      </Card>
+      </div>
+    </Card>
     </div>
   );
 };

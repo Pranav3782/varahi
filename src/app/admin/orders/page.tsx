@@ -83,8 +83,9 @@ export default function AdminOrdersPage() {
       <div className="grid grid-cols-1 xl:grid-cols-4 gap-8">
         <div className="xl:col-span-3">
           <Card className="border-none shadow-2xl rounded-[40px] overflow-hidden">
-            <Table>
-              <TableHeader className="bg-[#F9F6EF]">
+            <div className="overflow-x-auto">
+              <Table>
+                <TableHeader className="bg-[#F9F6EF]">
                 <TableRow className="border-b-[#DDD0B5]/30">
                   <TableHead className="py-6 px-8 text-[10px] font-black uppercase tracking-widest text-[#7A6848]">Order ID</TableHead>
                   <TableHead className="text-[10px] font-black uppercase tracking-widest text-[#7A6848]">Customer</TableHead>
@@ -148,7 +149,8 @@ export default function AdminOrdersPage() {
                 )}
               </TableBody>
             </Table>
-          </Card>
+          </div>
+        </Card>
         </div>
 
         <div className="space-y-8">

@@ -17,7 +17,12 @@ const MENU_ITEMS = [
   { id: 'orders', label: 'Orders', icon: 'fa-cart-shopping', href: '/admin/orders' },
 ];
 
-export const AdminSidebar: React.FC = () => {
+interface AdminSidebarProps {
+  onClose?: () => void;
+  className?: string;
+}
+
+export const AdminSidebar: React.FC<AdminSidebarProps> = ({ onClose, className }) => {
   const pathname = usePathname();
   const router = useRouter();
   const auth = useAuth();
@@ -31,9 +36,9 @@ export const AdminSidebar: React.FC = () => {
   };
 
   return (
-    <aside className="w-[280px] bg-[#0F0F11] text-white flex flex-col h-screen sticky top-0 overflow-y-auto shrink-0 border-r border-white/5 font-body">
-      <div className="p-8 pb-4">
-        <Link href="/admin" className="flex items-center gap-3 group">
+    <aside className={cn("w-[280px] bg-[#0F0F11] text-white flex flex-col h-screen sticky top-0 overflow-y-auto shrink-0 border-r border-white/5 font-body", className)}>
+      <div className="p-6 md:p-8 pb-4 flex items-center justify-between">
+        <Link href="/admin" onClick={onClose} className="flex items-center gap-3 group">
           <div className="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
             <i className="fa-solid fa-leaf text-xl text-white"></i>
           </div>
@@ -42,6 +47,15 @@ export const AdminSidebar: React.FC = () => {
             <span className="text-[10px] font-black text-white/30 uppercase tracking-[3px]">Admin Panel</span>
           </div>
         </Link>
+        {onClose && (
+          <button 
+            onClick={onClose} 
+            className="md:hidden w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-white/70 hover:text-white"
+            aria-label="Close Admin Sidebar"
+          >
+            <i className="fa-solid fa-xmark text-lg"></i>
+          </button>
+        )}
       </div>
 
       <div className="px-4 py-8 flex-1">
@@ -53,6 +67,7 @@ export const AdminSidebar: React.FC = () => {
               <Link 
                 key={item.id}
                 href={item.href}
+                onClick={onClose}
                 className={cn(
                   "flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all group",
                   isActive 

@@ -111,7 +111,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         {[
           { label: 'Total Revenue', value: `₹${stats.revenue.toLocaleString('en-IN')}`, trend: '+14%', icon: 'fa-indian-rupee-sign', bg: 'bg-[#EBF5EE]' },
           { label: 'Total Orders', value: stats.ordersCount.toString(), trend: '+8%', icon: 'fa-shopping-cart', bg: 'bg-[#FFFBEF]' },

@@ -9,6 +9,9 @@ export default {
   ],
   theme: {
     extend: {
+      screens: {
+        'xs': '475px',
+      },
       fontFamily: {
         body: ['var(--font-oswald)', 'Oswald', 'sans-serif'],
         sans: ['var(--font-oswald)', 'Oswald', 'sans-serif'],
