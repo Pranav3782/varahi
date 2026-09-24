@@ -31,6 +31,28 @@ const NATIVE_CARDS = [
 ];
 
 export const NativeSection: React.FC = () => {
+  const scrollRef = React.useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = React.useState(0);
+
+  const handleScroll = () => {
+    if (!scrollRef.current) return;
+    const container = scrollRef.current;
+    const scrollPosition = container.scrollLeft;
+    const cardWidth = container.firstElementChild?.clientWidth || 1;
+    const index = Math.round(scrollPosition / (cardWidth + 16));
+    setActiveIndex(Math.min(Math.max(index, 0), NATIVE_CARDS.length - 1));
+  };
+
+  const scrollToIndex = (index: number) => {
+    if (!scrollRef.current) return;
+    const container = scrollRef.current;
+    const cardWidth = container.firstElementChild?.clientWidth || 0;
+    container.scrollTo({
+      left: index * (cardWidth + 16),
+      behavior: 'smooth'
+    });
+  };
+
   return (
     <section className="py-8 md:py-24 bg-[#F9F6EF] border-t border-border/50 overflow-hidden">
       <div className="max-w-[1400px] mx-auto px-5 md:px-10">
@@ -41,11 +63,15 @@ export const NativeSection: React.FC = () => {
           <div className="w-24 h-1 bg-primary/20 mx-auto mt-4 md:mt-6 rounded-full"></div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+        <div 
+          ref={scrollRef}
+          onScroll={handleScroll}
+          className="flex md:grid md:grid-cols-2 lg:grid-cols-4 overflow-x-auto no-scrollbar snap-x snap-mandatory gap-4 md:gap-6 -mx-5 px-5 md:mx-0 md:px-0 pb-4 md:pb-0 scroll-smooth touch-pan-x"
+        >
           {NATIVE_CARDS.map((card, i) => (
             <div 
               key={i} 
-              className="relative w-full aspect-[4/5] rounded-[20px] md:rounded-[24px] overflow-hidden group shadow-lg bg-white"
+              className="relative min-w-[82vw] sm:min-w-[320px] md:min-w-0 md:w-full aspect-[4/5] rounded-[20px] md:rounded-[24px] overflow-hidden group shadow-lg bg-white shrink-0 snap-center"
             >
               <Image 
                 src={card.image}
@@ -53,9 +79,25 @@ export const NativeSection: React.FC = () => {
                 fill
                 referrerPolicy="no-referrer"
                 className="object-cover transition-transform duration-1000 group-hover:scale-105"
-                sizes="(max-width: 768px) 240px, 450px"
+                sizes="(max-width: 768px) 85vw, 350px"
               />
             </div>
+          ))}
+        </div>
+
+        {/* Mobile Carousel Indicators */}
+        <div className="flex md:hidden justify-center items-center gap-2 mt-4">
+          {NATIVE_CARDS.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => scrollToIndex(i)}
+              aria-label={`Go to slide ${i + 1}`}
+              className={`h-2 rounded-full transition-all duration-300 ${
+                activeIndex === i 
+                  ? "w-6 bg-primary" 
+                  : "w-2 bg-primary/25 hover:bg-primary/50"
+              }`}
+            />
           ))}
         </div>
       </div>

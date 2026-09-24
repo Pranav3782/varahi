@@ -24,7 +24,7 @@ export const SplashScreen: React.FC = () => {
           className="w-32 h-32 md:w-48 md:h-48 relative mb-10 brightness-0 invert"
         >
           <Image 
-            src="https://i.ibb.co/FqCKvSVb/Group-66-1-removebg-preview.png"
+            src="/mobile-logo.png"
             alt="Vivaan Farms Logo"
             fill
             className="object-contain"

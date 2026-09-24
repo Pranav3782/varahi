@@ -50,7 +50,7 @@ export const HoverFooter: React.FC = () => {
             <div className="flex items-center space-x-3">
               <div className="w-14 h-14 relative brightness-0 invert">
                 <Image 
-                  src="https://i.ibb.co/FqCKvSVb/Group-66-1-removebg-preview.png"
+                  src="/mobile-logo.png"
                   alt="Vivaan Logo"
                   fill
                   className="object-contain"

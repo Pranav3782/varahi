@@ -99,7 +99,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenCart, cartCount, onFilter,
             {/* Desktop Logo */}
             <div className="hidden md:block w-40 h-20 relative transition-transform duration-300 group-hover:scale-105">
               <Image 
-                src="https://i.ibb.co/FqCKvSVb/Group-66-1-removebg-preview.png"
+                src="/mobile-logo.png"
                 alt="Vivaan Farms"
                 fill
                 className="object-contain object-left"

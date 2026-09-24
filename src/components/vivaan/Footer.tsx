@@ -43,7 +43,7 @@ export const Footer: React.FC = () => {
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 bg-white rounded-lg flex items-center justify-center p-1 shrink-0 shadow-sm">
               <Image 
-                src="https://i.ibb.co/FqCKvSVb/Group-66-1-removebg-preview.png" 
+                src="/mobile-logo.png" 
                 alt="Vivaan Farms" 
                 width={30} 
                 height={30} 
@@ -293,7 +293,7 @@ export const Footer: React.FC = () => {
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center p-1.5 shadow-md shrink-0">
                 <Image 
-                  src="https://i.ibb.co/FqCKvSVb/Group-66-1-removebg-preview.png" 
+                  src="/mobile-logo.png" 
                   alt="Vivaan Farms Logo" 
                   width={40} 
                   height={40} 

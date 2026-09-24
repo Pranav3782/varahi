@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     description: 'Pure A2 Gir Cow Bilona Ghee & Organic Goods from Gujarat',
   },
   icons: {
-    icon: 'https://i.ibb.co/FqCKvSVb/Group-66-1-removebg-preview.png',
+    icon: '/mobile-logo.png',
   },
 };
 
@@ -40,7 +40,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${oswald.variable}`} suppressHydrationWarning>
       <head>
-        <link rel="icon" href="https://i.ibb.co/FqCKvSVb/Group-66-1-removebg-preview.png" />
+        <link rel="icon" href="/mobile-logo.png" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
       </head>
       <body className="font-sans antialiased" suppressHydrationWarning>

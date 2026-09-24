@@ -61,7 +61,7 @@ export default function PaymentPage() {
         currency: order.currency,
         name: "Vivaan Farms",
         description: "Farm-Direct Purity Purchase",
-        image: "https://i.ibb.co/FqCKvSVb/Group-66-1-removebg-preview.png",
+        image: "/mobile-logo.png",
         order_id: order.id,
         handler: async function (response: any) {
           try {
